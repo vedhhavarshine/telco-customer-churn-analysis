@@ -1,5 +1,5 @@
 # ============================================================
-# TELCO CUSTOMER CHURN - DATA CLEANING & VISUALIZATION
+# TELCO CUSTOMER CHURN - DATA CLEANING & ANALYSIS
 # ============================================================
 
 from pathlib import Path
@@ -21,21 +21,21 @@ OUTPUT_FOLDER.mkdir(exist_ok=True)
 
 
 # ============================================================
-# 2. FIND THE EXCEL DATASET AUTOMATICALLY
+# 2. FIND THE EXCEL DATASET
 # ============================================================
 
 excel_files = list(DATA_FOLDER.glob("*.xlsx"))
 
-if len(excel_files) == 0:
+if not excel_files:
     raise FileNotFoundError(
-        "No .xlsx Excel file was found inside the 'data' folder."
+        "No Excel (.xlsx) file was found inside the 'data' folder."
     )
 
 INPUT_FILE = excel_files[0]
 
-print("=" * 60)
+print("=" * 70)
 print("TELCO CUSTOMER CHURN ANALYSIS")
-print("=" * 60)
+print("=" * 70)
 
 print("\nExcel file found:")
 print(INPUT_FILE)
@@ -58,9 +58,9 @@ print(f"Columns: {df.shape[1]}")
 # 4. INITIAL DATA INSPECTION
 # ============================================================
 
-print("\n" + "=" * 60)
+print("\n" + "=" * 70)
 print("INITIAL DATA INSPECTION")
-print("=" * 60)
+print("=" * 70)
 
 print("\nFirst 5 rows:")
 print(df.head())
@@ -73,57 +73,55 @@ print(df.dtypes)
 
 
 # ============================================================
-# 5. MISSING VALUES
+# 5. MISSING VALUE ANALYSIS
 # ============================================================
 
-print("\n" + "=" * 60)
+print("\n" + "=" * 70)
 print("MISSING VALUE ANALYSIS")
-print("=" * 60)
+print("=" * 70)
 
 missing_values = df.isnull().sum()
-
-print("\nMissing values by column:")
-
 missing_only = missing_values[missing_values > 0]
 
 if len(missing_only) == 0:
-    print("No missing values found.")
+    print("\nNo missing values found.")
 else:
+    print("\nMissing values by column:")
     print(missing_only)
 
 print(f"\nTotal missing values: {missing_values.sum()}")
 
 
 # ============================================================
-# 6. CONVERT TOTALCHARGES TO NUMERIC
+# 6. CONVERT TOTAL CHARGES TO NUMERIC
 # ============================================================
 
-if "TotalCharges" in df.columns:
+if "Total Charges" in df.columns:
 
-    print("\nChecking TotalCharges...")
+    print("\nChecking Total Charges...")
 
-    df["TotalCharges"] = pd.to_numeric(
-        df["TotalCharges"],
+    df["Total Charges"] = pd.to_numeric(
+        df["Total Charges"],
         errors="coerce"
     )
 
-    totalcharges_missing = df["TotalCharges"].isnull().sum()
+    total_charges_missing = df["Total Charges"].isnull().sum()
 
     print(
-        f"Missing TotalCharges after conversion: "
-        f"{totalcharges_missing}"
+        f"Missing Total Charges after conversion: "
+        f"{total_charges_missing}"
     )
 
-    if totalcharges_missing > 0:
+    if total_charges_missing > 0:
 
-        median_value = df["TotalCharges"].median()
+        median_value = df["Total Charges"].median()
 
-        df["TotalCharges"] = df["TotalCharges"].fillna(
+        df["Total Charges"] = df["Total Charges"].fillna(
             median_value
         )
 
         print(
-            "Missing TotalCharges values were "
+            "Missing Total Charges values were "
             "filled using the median."
         )
 
@@ -132,9 +130,9 @@ if "TotalCharges" in df.columns:
 # 7. DUPLICATE CHECK
 # ============================================================
 
-print("\n" + "=" * 60)
+print("\n" + "=" * 70)
 print("DUPLICATE ANALYSIS")
-print("=" * 60)
+print("=" * 70)
 
 duplicate_count = df.duplicated().sum()
 
@@ -152,22 +150,22 @@ else:
 
 
 # ============================================================
-# 8. CHECK IMPORTANT COLUMNS
+# 8. IMPORTANT COLUMN CHECK
 # ============================================================
 
-print("\n" + "=" * 60)
+print("\n" + "=" * 70)
 print("IMPORTANT COLUMN CHECK")
-print("=" * 60)
+print("=" * 70)
 
 important_columns = [
-    "gender",
-    "SeniorCitizen",
+    "Gender",
+    "Senior Citizen",
     "Partner",
     "Dependents",
     "Contract",
-    "InternetService",
-    "PaymentMethod",
-    "Churn"
+    "Internet Service",
+    "Payment Method",
+    "Churn Label"
 ]
 
 for column in important_columns:
@@ -182,9 +180,9 @@ for column in important_columns:
 # 9. NUMERICAL SUMMARY
 # ============================================================
 
-print("\n" + "=" * 60)
+print("\n" + "=" * 70)
 print("NUMERICAL SUMMARY")
-print("=" * 60)
+print("=" * 70)
 
 print(df.describe())
 
@@ -193,14 +191,16 @@ print(df.describe())
 # 10. OUTLIER ANALYSIS
 # ============================================================
 
-print("\n" + "=" * 60)
+print("\n" + "=" * 70)
 print("OUTLIER ANALYSIS")
-print("=" * 60)
+print("=" * 70)
 
 numeric_columns = [
-    "tenure",
-    "MonthlyCharges",
-    "TotalCharges"
+    "Tenure Months",
+    "Monthly Charges",
+    "Total Charges",
+    "Churn Score",
+    "CLTV"
 ]
 
 for column in numeric_columns:
@@ -230,16 +230,16 @@ for column in numeric_columns:
 # 11. CHURN SUMMARY
 # ============================================================
 
-print("\n" + "=" * 60)
+print("\n" + "=" * 70)
 print("CHURN SUMMARY")
-print("=" * 60)
+print("=" * 70)
 
-if "Churn" in df.columns:
+if "Churn Label" in df.columns:
 
-    churn_counts = df["Churn"].value_counts()
+    churn_counts = df["Churn Label"].value_counts()
 
     churn_percentages = (
-        df["Churn"]
+        df["Churn Label"]
         .value_counts(normalize=True)
         * 100
     )
@@ -255,17 +255,17 @@ if "Churn" in df.columns:
 # 12. CHURN RATE BY CONTRACT
 # ============================================================
 
-if "Contract" in df.columns and "Churn" in df.columns:
+if "Contract" in df.columns and "Churn Label" in df.columns:
 
     contract_churn = pd.crosstab(
         df["Contract"],
-        df["Churn"],
+        df["Churn Label"],
         normalize="index"
     ) * 100
 
-    print("\n" + "=" * 60)
+    print("\n" + "=" * 70)
     print("CHURN RATE BY CONTRACT")
-    print("=" * 60)
+    print("=" * 70)
 
     print(contract_churn.round(2))
 
@@ -274,17 +274,17 @@ if "Contract" in df.columns and "Churn" in df.columns:
 # 13. CHURN RATE BY INTERNET SERVICE
 # ============================================================
 
-if "InternetService" in df.columns and "Churn" in df.columns:
+if "Internet Service" in df.columns and "Churn Label" in df.columns:
 
     internet_churn = pd.crosstab(
-        df["InternetService"],
-        df["Churn"],
+        df["Internet Service"],
+        df["Churn Label"],
         normalize="index"
     ) * 100
 
-    print("\n" + "=" * 60)
+    print("\n" + "=" * 70)
     print("CHURN RATE BY INTERNET SERVICE")
-    print("=" * 60)
+    print("=" * 70)
 
     print(internet_churn.round(2))
 
@@ -293,13 +293,13 @@ if "InternetService" in df.columns and "Churn" in df.columns:
 # 14. VISUALIZATION - CHURN DISTRIBUTION
 # ============================================================
 
-if "Churn" in df.columns:
+if "Churn Label" in df.columns:
 
     plt.figure(figsize=(8, 5))
 
     sns.countplot(
         data=df,
-        x="Churn"
+        x="Churn Label"
     )
 
     plt.title("Customer Churn Distribution")
@@ -313,21 +313,21 @@ if "Churn" in df.columns:
         dpi=300
     )
 
-    plt.show()
+    plt.close()
 
 
 # ============================================================
 # 15. VISUALIZATION - CHURN BY CONTRACT
 # ============================================================
 
-if "Contract" in df.columns and "Churn" in df.columns:
+if "Contract" in df.columns and "Churn Label" in df.columns:
 
     plt.figure(figsize=(9, 5))
 
     sns.countplot(
         data=df,
         x="Contract",
-        hue="Churn"
+        hue="Churn Label"
     )
 
     plt.title("Customer Churn by Contract Type")
@@ -343,21 +343,21 @@ if "Contract" in df.columns and "Churn" in df.columns:
         dpi=300
     )
 
-    plt.show()
+    plt.close()
 
 
 # ============================================================
 # 16. VISUALIZATION - TENURE BY CHURN
 # ============================================================
 
-if "tenure" in df.columns and "Churn" in df.columns:
+if "Tenure Months" in df.columns and "Churn Label" in df.columns:
 
     plt.figure(figsize=(8, 5))
 
     sns.boxplot(
         data=df,
-        x="Churn",
-        y="tenure"
+        x="Churn Label",
+        y="Tenure Months"
     )
 
     plt.title("Tenure Distribution by Churn")
@@ -371,21 +371,21 @@ if "tenure" in df.columns and "Churn" in df.columns:
         dpi=300
     )
 
-    plt.show()
+    plt.close()
 
 
 # ============================================================
 # 17. VISUALIZATION - MONTHLY CHARGES BY CHURN
 # ============================================================
 
-if "MonthlyCharges" in df.columns and "Churn" in df.columns:
+if "Monthly Charges" in df.columns and "Churn Label" in df.columns:
 
     plt.figure(figsize=(8, 5))
 
     sns.boxplot(
         data=df,
-        x="Churn",
-        y="MonthlyCharges"
+        x="Churn Label",
+        y="Monthly Charges"
     )
 
     plt.title("Monthly Charges by Churn")
@@ -399,21 +399,21 @@ if "MonthlyCharges" in df.columns and "Churn" in df.columns:
         dpi=300
     )
 
-    plt.show()
+    plt.close()
 
 
 # ============================================================
 # 18. VISUALIZATION - INTERNET SERVICE BY CHURN
 # ============================================================
 
-if "InternetService" in df.columns and "Churn" in df.columns:
+if "Internet Service" in df.columns and "Churn Label" in df.columns:
 
     plt.figure(figsize=(9, 5))
 
     sns.countplot(
         data=df,
-        x="InternetService",
-        hue="Churn"
+        x="Internet Service",
+        hue="Churn Label"
     )
 
     plt.title("Customer Churn by Internet Service")
@@ -427,7 +427,7 @@ if "InternetService" in df.columns and "Churn" in df.columns:
         dpi=300
     )
 
-    plt.show()
+    plt.close()
 
 
 # ============================================================
@@ -438,7 +438,7 @@ numeric_df = df.select_dtypes(include="number")
 
 if numeric_df.shape[1] >= 2:
 
-    plt.figure(figsize=(10, 7))
+    plt.figure(figsize=(12, 8))
 
     sns.heatmap(
         numeric_df.corr(),
@@ -456,7 +456,7 @@ if numeric_df.shape[1] >= 2:
         dpi=300
     )
 
-    plt.show()
+    plt.close()
 
 
 # ============================================================
@@ -470,9 +470,9 @@ df.to_csv(
     index=False
 )
 
-print("\n" + "=" * 60)
+print("\n" + "=" * 70)
 print("CLEANED DATASET SAVED")
-print("=" * 60)
+print("=" * 70)
 
 print(cleaned_file)
 
@@ -481,9 +481,9 @@ print(cleaned_file)
 # 21. FINAL SUMMARY
 # ============================================================
 
-print("\n" + "=" * 60)
+print("\n" + "=" * 70)
 print("PROJECT COMPLETED SUCCESSFULLY")
-print("=" * 60)
+print("=" * 70)
 
 print(f"Final rows: {df.shape[0]}")
 print(f"Final columns: {df.shape[1]}")
@@ -501,4 +501,4 @@ for file in sorted(OUTPUT_FOLDER.iterdir()):
     if file.is_file():
         print(f" - {file.name}")
 
-print("\nTelco Customer Churn Analysis completed.")
+print("\nTelco Customer Churn Analysis completed successfully.")
