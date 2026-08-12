@@ -63,3 +63,63 @@ telco-customer-churn-analysis/
 ├── data_analysis.py
 ├── .gitignore
 └── README.md
+
+# Week 2 - Predictive Modeling Using Machine Learning
+
+## Project Overview
+
+This week focuses on building machine learning models to predict customer churn using the Telco Customer Churn dataset.
+
+## Objective
+
+The objective is to apply supervised machine learning algorithms and evaluate their performance in predicting customer churn.
+
+## Machine Learning Models
+
+- Decision Tree Classifier
+- Random Forest Classifier
+
+## Workflow
+
+- Loaded the Telco Customer Churn dataset
+- Prepared and cleaned the data
+- Handled missing values and duplicate records
+- Prepared the churn target variable
+- Separated features and target
+- Split the data into training and testing sets
+- Encoded categorical features
+- Trained Decision Tree and Random Forest models
+- Evaluated model performance
+- Compared the machine learning models
+
+## Evaluation Metrics
+
+The models were evaluated using:
+
+- Accuracy
+- Precision
+- Recall
+- F1 Score
+- ROC-AUC
+- Confusion Matrix
+- ROC Curve
+
+## Visualizations
+
+The Week 2 project generated:
+
+- Decision Tree Confusion Matrix
+- Random Forest Confusion Matrix
+- ROC Curve
+- Model Performance Comparison
+- Feature Importance
+
+## Files
+
+- `predictive_modeling.py` — Machine learning implementation
+- `week2_predictive_modeling.ipynb` — Notebook containing the predictive modeling workflow
+- `visualization_week2/` — Machine learning evaluation visualizations
+
+## Conclusion
+
+The project provided practical experience in supervised learning, model training, model evaluation, and visualization of machine learning performance for customer churn prediction.
